@@ -21,7 +21,7 @@ class GamestateLevel extends Gamestate {
   }
 
   void update(num time) {
-    level.update();
+    level.update(time);
   }
 
   void draw() {

@@ -17,6 +17,13 @@ class Resources {
         loadImage('vessel_${d}_${t}');
       }
     }
+    loadImage('vessel_center_break');
+    loadImage('heart');
+    loadImage('heart_arrow_left');
+    loadImage('heart_arrow_top');
+    loadImage('heart_arrow_right');
+    loadImage('heart_arrow_bottom');
+    loadImage('lungs');
   }
 
   static void loadImage(String key) {

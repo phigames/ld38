@@ -20,6 +20,7 @@ void main() {
   buffer = new CanvasElement();
   canvasContext = canvas.context2D;
   bufferContext = buffer.context2D;
+  Input.init();
   Resources.load();
   random = new Random();
   gamestate = new GamestateLevel();
