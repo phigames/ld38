@@ -5,7 +5,9 @@ import 'dart:math';
 
 part 'gamestate.dart';
 part 'level.dart';
+part 'leveldata.dart';
 part 'tile.dart';
+part 'particle.dart';
 part 'input.dart';
 part 'resources.dart';
 

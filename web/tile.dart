@@ -156,21 +156,21 @@ abstract class Tile {
     }
     if (connectionLeft || connectionTop || connectionRight || connectionBottom) {
       if (breakAnimationFrame == null || breakAnimationFrame < 0) {
-        bufferContext.drawImageScaled(Resources.images['vessel_center_${type}'], x * width, y * height, width, height);
+        bufferContext.drawImageScaled(Resources.images['vessel_center_${type}'], x * width + level.tileOffsetX, y * height + level.tileOffsetY, width, height);
       } else {
-        bufferContext.drawImageScaledFromSource(Resources.images['vessel_center_break'], breakAnimationFrame * 16, 0, 16, 16, x * width, y * height, width, height);
+        bufferContext.drawImageScaledFromSource(Resources.images['vessel_center_break'], breakAnimationFrame * 16, 0, 16, 16, x * width + level.tileOffsetX, y * height + level.tileOffsetY, width, height);
       }
       if (connectionLeft) {
-        bufferContext.drawImageScaled(Resources.images['vessel_left_${type}'], x * width, y * height, width, height);
+        bufferContext.drawImageScaled(Resources.images['vessel_left_${type}'], x * width + level.tileOffsetX, y * height + level.tileOffsetY, width, height);
       }
       if (connectionTop) {
-        bufferContext.drawImageScaled(Resources.images['vessel_top_${type}'], x * width, y * height, width, height);
+        bufferContext.drawImageScaled(Resources.images['vessel_top_${type}'], x * width + level.tileOffsetX, y * height + level.tileOffsetY, width, height);
       }
       if (connectionBottom) {
-        bufferContext.drawImageScaled(Resources.images['vessel_bottom_${type}'], x * width, y * height, width, height);
+        bufferContext.drawImageScaled(Resources.images['vessel_bottom_${type}'], x * width + level.tileOffsetX, y * height + level.tileOffsetY, width, height);
       }
       if (connectionRight) {
-        bufferContext.drawImageScaled(Resources.images['vessel_right_${type}'], x * width, y * height, width, height);
+        bufferContext.drawImageScaled(Resources.images['vessel_right_${type}'], x * width + level.tileOffsetX, y * height + level.tileOffsetY, width, height);
       }
       if (breakAnimationFrame != null && breakAnimationFrame >= 0) {
         int frameY;
@@ -181,7 +181,7 @@ abstract class Tile {
         } else if (type == 'infected') {
           frameY = 3;
         }
-        bufferContext.drawImageScaledFromSource(Resources.images['vessel_center_break'], breakAnimationFrame * 16, frameY * 16, 16, 16, x * width, y * height, width, height);
+        bufferContext.drawImageScaledFromSource(Resources.images['vessel_center_break'], breakAnimationFrame * 16, frameY * 16, 16, 16, x * width + level.tileOffsetX, y * height + level.tileOffsetY, width, height);
       }
     }
   }
@@ -221,7 +221,11 @@ class TileHeart extends Tile {
             if (!flowTiles.contains(flowTile)) {
               flowTiles.add(flowTile);
             }
+          } else {
+            level.addLeak(this, -1, 0);
           }
+        } else {
+          level.addLeak(this, -1, 0);
         }
       } else if (flowDirection == 1) { // FLOW TOP
         if (y > 0) {
@@ -231,7 +235,11 @@ class TileHeart extends Tile {
             if (!flowTiles.contains(flowTile)) {
               flowTiles.add(flowTile);
             }
+          } else {
+            level.addLeak(this, 0, -1);
           }
+        } else {
+          level.addLeak(this, 0, -1);
         }
       } else if (flowDirection == 2) { // FLOW RIGHT
         if (x < level.width - 1) {
@@ -241,7 +249,11 @@ class TileHeart extends Tile {
             if (!flowTiles.contains(flowTile)) {
               flowTiles.add(flowTile);
             }
+          } else {
+            level.addLeak(this, 1, 0);
           }
+        } else {
+          level.addLeak(this, 1, 0);
         }
       } else if (flowDirection == 3) { // FLOW BOTTOM
         if (y < level.height - 1) {
@@ -251,7 +263,11 @@ class TileHeart extends Tile {
             if (!flowTiles.contains(flowTile)) {
               flowTiles.add(flowTile);
             }
+          } else {
+            level.addLeak(this, 0, 1);
           }
+        } else {
+          level.addLeak(this, 0, 1);
         }
       }
     } else { // END OF CYCLE
@@ -276,17 +292,18 @@ class TileHeart extends Tile {
         oxygen = oxygen || source.oxygen;
         infected = infected || source.infected;
       }
+      level.onWon();
     }
   }
 
   void draw() {
     super.draw();
-    bufferContext.drawImageScaled(Resources.images['heart'], x * Tile.width, y * Tile.height, Tile.width, Tile.height);
+    bufferContext.drawImageScaled(Resources.images['heart'], x * Tile.width + level.tileOffsetX, y * Tile.height + level.tileOffsetY, Tile.width, Tile.height);
     switch (flowDirection) {
-      case 0: bufferContext.drawImageScaled(Resources.images['heart_arrow_left'], x * Tile.width, y * Tile.height, Tile.width, Tile.height); break;
-      case 1: bufferContext.drawImageScaled(Resources.images['heart_arrow_top'], x * Tile.width, y * Tile.height, Tile.width, Tile.height); break;
-      case 2: bufferContext.drawImageScaled(Resources.images['heart_arrow_right'], x * Tile.width, y * Tile.height, Tile.width, Tile.height); break;
-      case 3: bufferContext.drawImageScaled(Resources.images['heart_arrow_bottom'], x * Tile.width, y * Tile.height, Tile.width, Tile.height); break;
+      case 0: bufferContext.drawImageScaled(Resources.images['heart_arrow_left'], x * Tile.width + level.tileOffsetX, y * Tile.height + level.tileOffsetY, Tile.width, Tile.height); break;
+      case 1: bufferContext.drawImageScaled(Resources.images['heart_arrow_top'], x * Tile.width + level.tileOffsetX, y * Tile.height + level.tileOffsetY, Tile.width, Tile.height); break;
+      case 2: bufferContext.drawImageScaled(Resources.images['heart_arrow_right'], x * Tile.width + level.tileOffsetX, y * Tile.height + level.tileOffsetY, Tile.width, Tile.height); break;
+      case 3: bufferContext.drawImageScaled(Resources.images['heart_arrow_bottom'], x * Tile.width + level.tileOffsetX, y * Tile.height + level.tileOffsetY, Tile.width, Tile.height); break;
     }
   }
 
@@ -304,7 +321,7 @@ class TileLungs extends Tile {
 
   void draw() {
     super.draw();
-    bufferContext.drawImageScaled(Resources.images['lungs'], x * Tile.width, y * Tile.height, Tile.width, Tile.height);
+    bufferContext.drawImageScaled(Resources.images['lungs'], x * Tile.width + level.tileOffsetX, y * Tile.height + level.tileOffsetY, Tile.width, Tile.height);
   }
 
 }

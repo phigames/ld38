@@ -24,6 +24,11 @@ class Resources {
     loadImage('heart_arrow_right');
     loadImage('heart_arrow_bottom');
     loadImage('lungs');
+    loadImage('won');
+    loadImage('next');
+    loadImage('lost');
+    loadImage('retry');
+    loadImage('start');
   }
 
   static void loadImage(String key) {

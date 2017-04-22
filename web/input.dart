@@ -7,6 +7,7 @@ class Input {
   static void init() {
     canvas.onMouseMove.listen(onMouseMove);
     canvas.onClick.listen(onClick);
+    canvas.onTouchStart.listen(onTouchStart);
     mouseX = mouseY = 0;
   }
 
@@ -16,6 +17,13 @@ class Input {
   }
 
   static void onClick(MouseEvent event) {
+    gamestate.onClick();
+  }
+
+  static void onTouchStart(TouchEvent event) {
+    event.preventDefault();
+    mouseX = event.touches[0].client.x;
+    mouseY = event.touches[0].client.y;
     gamestate.onClick();
   }
 

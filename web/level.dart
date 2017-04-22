@@ -3,28 +3,21 @@ part of ld38;
 class Level {
 
   int width, height;
+  num tileOffsetX, tileOffsetY;
   List<List<Tile>> tiles;
   Tile heart;
   List<Tile> flowTiles;
   num flowTime;
   List<ParticleEmitter> particleEmitters;
+  bool won, lost;
+  bool next;
 
-  Level() {
-    width = 10;
-    height = 10;
+  Level(this.width, this.height) {
     onResize();
-    tiles = new List<List<Tile>>();
-    for (int i = 0; i < width; i++) {
-      tiles.add(new List<Tile>());
-      for (int j = 0; j < height; j++) {
-        tiles[i].add(new TileVessel(this, i, j, random.nextBool(), random.nextBool(), random.nextBool(), random.nextBool()));
-      }
-    }
-    tiles[5][7] = heart = new TileHeart(this, 5, 7, true, false, true, false, 2);
-    tiles[6][7] = new TileVessel(this, 6, 7, true, true, true, false);
-    tiles[7][7] = new TileLungs(this, 7, 7, true, true, false, false);
     flowTiles = new List<Tile>();
     particleEmitters = new List<ParticleEmitter>();
+    won = lost = false;
+    next = false;
   }
 
   void resetTiles() {
@@ -33,6 +26,9 @@ class Level {
         tiles[i][j].reset();
       }
     }
+    flowTime = null;
+    particleEmitters.clear();
+    won = lost = false;
   }
 
   void flow() {
@@ -51,6 +47,7 @@ class Level {
       color = '#005DFF';
     }
     particleEmitters.add(new ParticleEmitter(brokenTile.x * Tile.width + Tile.width / 2, brokenTile.y * Tile.height + Tile.height / 2, 0, 0, color));
+    onLost();
   }
 
   void addLeak(Tile leakingTile, num offsetX, num offsetY) {
@@ -63,6 +60,16 @@ class Level {
       color = '#005DFF';
     }
     particleEmitters.add(new ParticleEmitter(leakingTile.x * Tile.width + (Tile.width + offsetX * Tile.width) / 2, leakingTile.y * Tile.height + (Tile.height + offsetY * Tile.height) / 2, offsetX, offsetY, color));
+    onLost();
+  }
+
+  void onWon() {
+    won = true;
+  }
+
+  void onLost() {
+    print('lost');
+    lost = true;
   }
 
   void update(num time) {
@@ -89,83 +96,99 @@ class Level {
       }
     }
     for (int i = 0; i < particleEmitters.length; i++) {
-      particleEmitters[i].draw();
+      particleEmitters[i].draw(tileOffsetX, tileOffsetY);
     }
-  }
-
-  void onResize() {
-    Tile.width = Tile.height = 64;
-  }
-
-  void onClick() {
-    int x = Input.mouseX ~/ Tile.width;
-    int y = Input.mouseY ~/ Tile.height;
-    if (x >= 0 && x < width && y >= 0 && y < height) {
-      tiles[x][y].rotate();
-    }
-  }
-
-}
-
-class ParticleEmitter {
-
-  num x, y;
-  num biasX, biasY;
-  String color;
-  List<Particle> particles;
-
-  ParticleEmitter(this.x, this.y, this.biasX, this.biasY, this.color) {
-    particles = new List<Particle>();
-  }
-
-  void update(num time) {
-    for (int j = 0; j < 3; j++) {
-      particles.add(new Particle(x, y, biasX, biasY, color));
-    }
-    for (int i = 0; i < particles.length; i++) {
-      particles[i].update(time);
-      if (particles[i].lifeTime <= 0) {
-        particles.removeAt(i);
-        i--;
+    if (flowTime == null) {
+      num scaleFactor = Tile.width / 16;
+      num buttonX = (canvas.width - 38 * scaleFactor) / 2;
+      num buttonY = height * Tile.height + tileOffsetY + 8 * scaleFactor;
+      num buttonWidth = 38 * scaleFactor;
+      num buttonHeight = 16 * scaleFactor;
+      if (Input.mouseX > buttonX && Input.mouseX < buttonX + buttonWidth &&
+          Input.mouseY > buttonY && Input.mouseY < buttonY + buttonHeight) {
+        bufferContext.drawImageScaledFromSource(Resources.images['start'], 38, 0, 38, 16, buttonX, buttonY, buttonWidth, buttonHeight);
+      } else {
+        bufferContext.drawImageScaledFromSource(Resources.images['start'], 0, 0, 38, 16, buttonX, buttonY, buttonWidth, buttonHeight);
+      }
+    } else if (won) {
+      num scaleFactor = Tile.width / 16;
+      bufferContext.drawImageScaled(Resources.images['won'], (canvas.width - 105 * scaleFactor) / 2, height * Tile.height + tileOffsetY + scaleFactor, 105 * scaleFactor, 13 * scaleFactor);
+      num buttonX = (canvas.width - 32 * scaleFactor) / 2;
+      num buttonY = height * Tile.height + tileOffsetY + 15 * scaleFactor;
+      num buttonWidth = 32 * scaleFactor;
+      num buttonHeight = 16 * scaleFactor;
+      if (Input.mouseX > buttonX && Input.mouseX < buttonX + buttonWidth &&
+          Input.mouseY > buttonY && Input.mouseY < buttonY + buttonHeight) {
+        bufferContext.drawImageScaledFromSource(Resources.images['next'], 32, 0, 32, 16, buttonX, buttonY, buttonWidth, buttonHeight);
+      } else {
+        bufferContext.drawImageScaledFromSource(Resources.images['next'], 0, 0, 32, 16, buttonX, buttonY, buttonWidth, buttonHeight);
+      }
+    } else if (lost) {
+      num scaleFactor = Tile.width / 16;
+      bufferContext.drawImageScaled(Resources.images['lost'], (canvas.width - 105 * scaleFactor) / 2, height * Tile.height + tileOffsetY + scaleFactor, 105 * scaleFactor, 13 * scaleFactor);
+      num buttonX = (canvas.width - 36 * scaleFactor) / 2;
+      num buttonY = height * Tile.height + tileOffsetY + 15 * scaleFactor;
+      num buttonWidth = 36 * scaleFactor;
+      num buttonHeight = 16 * scaleFactor;
+      if (Input.mouseX > buttonX && Input.mouseX < buttonX + buttonWidth &&
+          Input.mouseY > buttonY && Input.mouseY < buttonY + buttonHeight) {
+        bufferContext.drawImageScaledFromSource(Resources.images['retry'], 36, 0, 36, 16, buttonX, buttonY, buttonWidth, buttonHeight);
+      } else {
+        bufferContext.drawImageScaledFromSource(Resources.images['retry'], 0, 0, 36, 16, buttonX, buttonY, buttonWidth, buttonHeight);
       }
     }
   }
 
-  void draw() {
-    for (int i = 0; i < particles.length; i++) {
-      particles[i].draw();
+  void onResize() {
+    num gameWidth = max(width, 7);
+    num gameHeight = height + 3;
+    if (canvas.width / canvas.height > gameWidth / gameHeight) {
+      Tile.width = Tile.height = canvas.height / gameHeight;
+    } else {
+      Tile.width = Tile.height = canvas.width / gameWidth;
     }
+    tileOffsetX = (canvas.width - width * Tile.width) / 2;
+    tileOffsetY = Tile.height;
   }
 
-}
-
-class Particle {
-
-  num x, y;
-  num biasX, biasY;
-  num velocityX, velocityY;
-  String color;
-  num lifeTime;
-
-  Particle(this.x, this.y, this.biasX, this.biasY, this.color) {
-    num angle = random.nextDouble() * 2 * PI;
-    num speed = random.nextDouble();
-    velocityX = (cos(angle) + biasX) * speed * Tile.width / 256;
-    velocityY = (sin(angle) + biasY) * speed * Tile.height / 256;
-    lifeTime = 500;
-  }
-
-  void update(num time) {
-    x += velocityX * time;
-    y += velocityY * time;
-    velocityX *= 0.95;
-    velocityY *= 0.95;
-    lifeTime -= time;
-  }
-
-  void draw() {
-    bufferContext.fillStyle = color;
-    bufferContext.fillRect(x, y, Tile.width / 8, Tile.height / 8);
+  void onClick() {
+    if (flowTime == null) {
+      int x = (Input.mouseX - tileOffsetX) ~/ Tile.width;
+      int y = (Input.mouseY - tileOffsetY) ~/ Tile.height;
+      if (x >= 0 && x < width && y >= 0 && y < height) {
+        tiles[x][y].rotate();
+      } else {
+        num scaleFactor = Tile.width / 16;
+        num buttonX = (canvas.width - 38 * scaleFactor) / 2;
+        num buttonY = height * Tile.height + tileOffsetY + 8 * scaleFactor;
+        num buttonWidth = 38 * scaleFactor;
+        num buttonHeight = 16 * scaleFactor;
+        if (Input.mouseX > buttonX && Input.mouseX < buttonX + buttonWidth &&
+            Input.mouseY > buttonY && Input.mouseY < buttonY + buttonHeight) {
+          flow();
+        }
+      }
+    } else if (won) {
+      num scaleFactor = Tile.width / 16;
+      num buttonX = (canvas.width - 32 * scaleFactor) / 2;
+      num buttonY = height * Tile.height + tileOffsetY + 15 * scaleFactor;
+      num buttonWidth = 32 * scaleFactor;
+      num buttonHeight = 16 * scaleFactor;
+      if (Input.mouseX > buttonX && Input.mouseX < buttonX + buttonWidth &&
+          Input.mouseY > buttonY && Input.mouseY < buttonY + buttonHeight) {
+        next = true;
+      }
+    } else if (lost) {
+      num scaleFactor = Tile.width / 16;
+      num buttonX = (canvas.width - 36 * scaleFactor) / 2;
+      num buttonY = height * Tile.height + tileOffsetY + 15 * scaleFactor;
+      num buttonWidth = 36 * scaleFactor;
+      num buttonHeight = 16 * scaleFactor;
+      if (Input.mouseX > buttonX && Input.mouseX < buttonX + buttonWidth &&
+          Input.mouseY > buttonY && Input.mouseY < buttonY + buttonHeight) {
+        resetTiles();
+      }
+    }
   }
 
 }
