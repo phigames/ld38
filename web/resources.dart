@@ -27,6 +27,8 @@ class Resources {
     loadImage('heart_arrow_bottom');
     loadImage('lungs');
     loadImage('liver');
+    loadImage('brain');
+    loadImage('stomach');
     loadImage('level');
     loadImage('won');
     loadImage('next');

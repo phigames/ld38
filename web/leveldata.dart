@@ -17,13 +17,20 @@ class LevelData {
     '.I..I',
     '.PI<T',
     '.I..I',
-    '.JIIL' ];
+    '.IJIL' ];
   static final List<String> level4 =
   [ 'LIIIL',
     'v...I',
     'ILIPT',
     'II..J',
     'LTPIL' ];
+  static final List<String> level5 =
+  [ 'L....L.',
+    'LIIPITL',
+    'ILI+ILI',
+    'JLLTBLL',
+    'LTLLT^.',
+    '.LIJIL.' ];
 
   static Level loadLevel(List<String> data) {
     int width = data[0].length;
@@ -79,7 +86,13 @@ class LevelData {
             tiles[i].add(new TileLungs(level, i, j, connectLeft, connectTop, connectRight, connectBottom));
             level.organs.add(tiles[i][j]);
           } else if (symbol == 'J') {
-            tiles[i].add(new TileLiver(level, i, j, connectLeft, connectTop, connectRight, connectBottom));
+            tiles[i].add(new TileLiver(level, i, j, true, false, true, false));
+            level.organs.add(tiles[i][j]);
+          } else if (symbol == 'B') {
+            tiles[i].add(new TileBrain(level, i, j, true, true, false, false));
+            level.organs.add(tiles[i][j]);
+          } else if (symbol == 'S') {
+            tiles[i].add(new TileStomach(level, i, j, true, true, true, false));
             level.organs.add(tiles[i][j]);
           }
           int rotation = random.nextInt(4);

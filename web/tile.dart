@@ -339,3 +339,27 @@ class TileLiver extends Tile {
   }
 
 }
+
+class TileBrain extends Tile {
+
+  TileBrain(Level level, int x, int y, bool left, bool top, bool right, bool bottom)
+      : super(level, x, y, left, top, right, bottom, true);
+
+  void draw() {
+    super.draw();
+    bufferContext.drawImageScaled(Resources.images['brain'], x * Tile.width + level.tileOffsetX, y * Tile.height + level.tileOffsetY, Tile.width, Tile.height);
+  }
+
+}
+
+class TileStomach extends Tile {
+
+  TileStomach(Level level, int x, int y, bool left, bool top, bool right, bool bottom)
+      : super(level, x, y, left, top, right, bottom, true);
+
+  void draw() {
+    super.draw();
+    bufferContext.drawImageScaled(Resources.images['stomach'], x * Tile.width + level.tileOffsetX, y * Tile.height + level.tileOffsetY, Tile.width, Tile.height);
+  }
+
+}
