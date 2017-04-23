@@ -3,7 +3,7 @@ part of ld38;
 class LevelData {
 
   static final List<String> level1 =
-  [ 'LIP',
+  [ 'LpL',
     'I I',
     'L>L' ];
   static final List<String> level2 =
@@ -21,9 +21,9 @@ class LevelData {
   static final List<String> level4 =
   [ 'LIIIL',
     'v...I',
-    'ILIPT',
+    'ILIpT',
     'II..J',
-    'LTPIL' ];
+    'LTpIL' ];
   static final List<String> level5 =
   [ 'L....L.',
     'LIIPITL',
@@ -31,6 +31,13 @@ class LevelData {
     'JLLTBLL',
     'LTLLT^.',
     '.LIJIL.' ];
+  static final List<String> level6 =
+  [ 'LILLIL.',
+    'ILTLISL',
+    'TBLpILI',
+    'IILI.LT',
+    'L>TL.PL',
+    'L.LTIL.' ];
 
   static Level loadLevel(List<String> data) {
     int width = data[0].length;
@@ -83,7 +90,10 @@ class LevelData {
             tiles[i].add(new TileHeart(level, i, j, connectLeft, connectTop, connectRight, connectBottom, 3));
             level.organs[0] = tiles[i][j];
           } else if (symbol == 'P') {
-            tiles[i].add(new TileLungs(level, i, j, connectLeft, connectTop, connectRight, connectBottom));
+            tiles[i].add(new TileLungs(level, i, j, true, true, true, false));
+            level.organs.add(tiles[i][j]);
+          } else if (symbol == 'p') {
+            tiles[i].add(new TileLungs(level, i, j, true, false, true, false));
             level.organs.add(tiles[i][j]);
           } else if (symbol == 'J') {
             tiles[i].add(new TileLiver(level, i, j, true, false, true, false));
