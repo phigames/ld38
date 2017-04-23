@@ -37,11 +37,14 @@ class Resources {
     loadImage('retry');
     loadImage('start');
     loadImage('tutorial');
+    loadImage('game_over');
     loadImage('speaker');
     loadImage('speaker_no');
-    loadSound('operationroom');
+    loadSound('background');
     loadSound('blip_low');
     loadSound('blip_high');
+    loadSound('beep_alive');
+    loadSound('beep_dead');
     loadSound('flow');
   }
 

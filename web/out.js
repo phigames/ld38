@@ -6062,7 +6062,7 @@
       "%": "HTMLInputElement"
     },
     MediaElement: {
-      "^": "HtmlElement;currentTime},error=,loop},src}",
+      "^": "HtmlElement;currentTime},error=,loop},paused=,src}",
       pause$0: function(receiver) {
         return receiver.pause();
       },
@@ -7321,7 +7321,7 @@
       G.Resources_load();
       $.random = C.C__JSRandom;
       t1 = new G.GamestateLevel(null, null, null);
-      t2 = [G.LevelData_loadLevel($.$get$LevelData_level1()), G.LevelData_loadLevel($.$get$LevelData_level2()), G.LevelData_loadLevel($.$get$LevelData_level3()), G.LevelData_loadLevel($.$get$LevelData_level4()), G.LevelData_loadLevel($.$get$LevelData_level5()), G.LevelData_loadLevel($.$get$LevelData_level6())];
+      t2 = [G.LevelData_loadLevel($.$get$LevelData_level1()), G.LevelData_loadLevel($.$get$LevelData_level2()), G.LevelData_loadLevel($.$get$LevelData_level3()), G.LevelData_loadLevel($.$get$LevelData_level4()), G.LevelData_loadLevel($.$get$LevelData_level5()), G.LevelData_loadLevel($.$get$LevelData_level6()), G.LevelData_loadLevel($.$get$LevelData_level7()), G.LevelData_loadLevel($.$get$LevelData_level8())];
       t1.levels = t2;
       t1.levelNumber = 0;
       t2 = t2[0];
@@ -7407,6 +7407,9 @@
       G.Resources_loadImage("speaker");
       G.Resources_loadImage("speaker_no");
       G.Resources_loadSound("operationroom");
+      G.Resources_loadSound("blip_low");
+      G.Resources_loadSound("blip_high");
+      G.Resources_loadSound("flow");
     },
     Resources_loadImage: function(key) {
       var t1, t2, e;
@@ -7458,7 +7461,7 @@
             return t1.$add();
           ++t1;
           this.levelNumber = t1;
-          if (t1 >= 6)
+          if (t1 >= 8)
             $.gamestate = new G.GamestateEnd();
           else {
             t2 = this.levels[t1];
@@ -7545,6 +7548,8 @@
               if (x >>> 0 !== x || x >= t2.length)
                 return H.ioore(t2, x);
               J.rotate$0$x(J.$index$asx(t2[x], y));
+              J.set$currentTime$x($.Resources_sounds.$index(0, "blip_low"), 0);
+              J.play$0$x($.Resources_sounds.$index(0, "blip_low"));
             } else {
               t2 = J.get$width$x($.canvas);
               t3 = 38 * scaleFactor;
@@ -7580,6 +7585,8 @@
                   return H.ioore(t2, 0);
                 t2[0].update$1(t1.flowTiles);
                 t1.flowTime = 0;
+                J.set$currentTime$x($.Resources_sounds.$index(0, "blip_high"), 0);
+                J.play$0$x($.Resources_sounds.$index(0, "blip_high"));
               }
             }
           } else if (t1.won === true) {
@@ -7609,8 +7616,11 @@
                 t2 = false;
             else
               t2 = false;
-            if (t2)
+            if (t2) {
               t1.next = true;
+              J.set$currentTime$x($.Resources_sounds.$index(0, "blip_high"), 0);
+              J.play$0$x($.Resources_sounds.$index(0, "blip_high"));
+            }
           } else if (t1.lost === true) {
             t2 = J.get$width$x($.canvas);
             t3 = 36 * scaleFactor;
@@ -7638,8 +7648,11 @@
                 t2 = false;
             else
               t2 = false;
-            if (t2)
+            if (t2) {
               t1.resetTiles$0();
+              J.set$currentTime$x($.Resources_sounds.$index(0, "blip_high"), 0);
+              J.play$0$x($.Resources_sounds.$index(0, "blip_high"));
+            }
           }
           t2 = $.Input_mouseX;
           if (typeof t2 !== "number")
@@ -7711,6 +7724,7 @@
         (t1 && C.JSArray_methods).set$length(t1, 0);
         this.lost = false;
         this.won = false;
+        J.pause$0$x($.Resources_sounds.$index(0, "flow"));
       },
       addLeak$3: function(leakingTile, offsetX, offsetY) {
         var color, t1, t2, t3, t4, t5;
@@ -7734,6 +7748,11 @@
         t1.push(t5);
         this.lost = true;
         this.lostMessage = "lost_mess";
+        if (J.get$paused$x($.Resources_sounds.$index(0, "flow")) === true) {
+          J.set$currentTime$x($.Resources_sounds.$index(0, "flow"), 0);
+          J.set$loop$x($.Resources_sounds.$index(0, "flow"), true);
+          J.play$0$x($.Resources_sounds.$index(0, "flow"));
+        }
       },
       checkOxygen$0: function() {
         var i, t1;
@@ -8300,6 +8319,11 @@
             t2.push(t6);
             t1.lost = true;
             t1.lostMessage = "lost_mess";
+            if (J.get$paused$x($.Resources_sounds.$index(0, "flow")) === true) {
+              J.set$currentTime$x($.Resources_sounds.$index(0, "flow"), 0);
+              J.set$loop$x($.Resources_sounds.$index(0, "flow"), true);
+              J.play$0$x($.Resources_sounds.$index(0, "flow"));
+            }
           } else
             flowTiles.push(this);
         }
@@ -8945,6 +8969,9 @@
   J.get$onMouseMove$x = function(receiver) {
     return J.getInterceptor$x(receiver).get$onMouseMove(receiver);
   };
+  J.get$paused$x = function(receiver) {
+    return J.getInterceptor$x(receiver).get$paused(receiver);
+  };
   J.get$width$x = function(receiver) {
     return J.getInterceptor$x(receiver).get$width(receiver);
   };
@@ -9299,12 +9326,16 @@
   }, "LevelData_level2", "$get$LevelData_level2", "level2", function() {
     return ["LIJIL", "I   I", "I LIP", "I I I", "LI>IL"];
   }, "LevelData_level3", "$get$LevelData_level3", "level3", function() {
-    return [".LIIL", ".I..I", ".PI<T", ".I..I", ".IJIL"];
+    return [".LIIL", ".I..I", ".PI<T", ".I..I", ".LJIL"];
   }, "LevelData_level4", "$get$LevelData_level4", "level4", function() {
-    return ["LIIIL", "v...I", "ILIpT", "II..J", "LTpIL"];
+    return ["LITLL", "v.LTL", "ILIpT", "II..J", "LTpIL"];
   }, "LevelData_level5", "$get$LevelData_level5", "level5", function() {
-    return ["L....L.", "LIIPITL", "ILI+ILI", "JLLTBLL", "LTLLT^.", ".LIJIL."];
+    return ["LIL.T.", "PT^IIL", "IIILIT", "TSLJLT", "LIITTL"];
   }, "LevelData_level6", "$get$LevelData_level6", "level6", function() {
+    return [".LITL.", "LSLLTL", "LT>IPT", ".ILLIL", ".LJTL."];
+  }, "LevelData_level7", "$get$LevelData_level7", "level7", function() {
+    return ["L....L.", "LIIPITL", "ILI+ILI", "JLLTBLL", "LTLLT^.", ".LIJIL."];
+  }, "LevelData_level8", "$get$LevelData_level8", "level8", function() {
     return ["LILLIL.", "ILTLISL", "TBLpILI", "IILI.LT", "L>TL.PL", "L.LTIL."];
   }]);
   Isolate = Isolate.$finishIsolateConstructor(Isolate);

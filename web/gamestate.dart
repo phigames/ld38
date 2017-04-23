@@ -30,9 +30,9 @@ class GamestateLevel extends Gamestate {
     levelNumber = 0;
     level = levels[levelNumber];
     level.tutorialMessage = levelNumber < 3 ? levelNumber : null;
-    Resources.sounds['operationroom'].currentTime = 0;
-    Resources.sounds['operationroom'].loop = true;
-    Resources.sounds['operationroom'].play();
+    Resources.sounds['background'].currentTime = 0;
+    Resources.sounds['background'].loop = true;
+    Resources.sounds['background'].play();
   }
 
   void update(num time) {
@@ -74,6 +74,7 @@ class GamestateEnd extends Gamestate {
   }
 
   void draw() {
+    bufferContext.drawImageScaled(Resources.images['game_over'], canvas.width / 2 - 89 * 2, canvas.height / 2 - 77 * 2, 89 * 4, 77 * 4);
   }
 
   void onResize() {

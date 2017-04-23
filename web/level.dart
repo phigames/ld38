@@ -35,12 +35,18 @@ class Level {
     particleEmitters.clear();
     won = lost = false;
     Resources.sounds['flow'].pause();
+    Resources.sounds['beep_dead'].pause();
   }
 
   void flow() {
     flowTiles.clear();
     organs[0].update(flowTiles); // UPDATE HEART
     flowTime = 0;
+    if (!won && !lost) {
+      Resources.sounds['beep_alive'].currentTime = 0;
+      Resources.sounds['beep_alive'].loop = true;
+      Resources.sounds['beep_alive'].play();
+    }
   }
 
   void addBreak(Tile brokenTile) {
@@ -59,6 +65,10 @@ class Level {
       Resources.sounds['flow'].currentTime = 0;
       Resources.sounds['flow'].loop = true;
       Resources.sounds['flow'].play();
+    }
+    if (Resources.sounds['beep_dead'].paused) {
+      Resources.sounds['beep_dead'].currentTime = 0;
+      Resources.sounds['beep_dead'].play();
     }
   }
 
@@ -79,6 +89,10 @@ class Level {
       Resources.sounds['flow'].loop = true;
       Resources.sounds['flow'].play();
     }
+    if (Resources.sounds['beep_dead'].paused) {
+      Resources.sounds['beep_dead'].currentTime = 0;
+      Resources.sounds['beep_dead'].play();
+    }
   }
 
   bool checkOxygen() {
@@ -92,10 +106,12 @@ class Level {
 
   void onWon() {
     won = true;
+    Resources.sounds['beep_alive'].pause();
   }
 
   void onLost() {
     lost = true;
+    Resources.sounds['beep_alive'].pause();
   }
 
   void update(num time) {
@@ -114,6 +130,10 @@ class Level {
           } else {
             onLost();
             lostMessage = 'lost_oxygen';
+            if (Resources.sounds['beep_dead'].paused) {
+              Resources.sounds['beep_dead'].currentTime = 0;
+              Resources.sounds['beep_dead'].play();
+            }
           }
         }
       }
