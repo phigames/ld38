@@ -23,8 +23,11 @@ class GamestateLevel extends Gamestate {
                LevelData.loadLevel(LevelData.level2),
                LevelData.loadLevel(LevelData.level3),
                LevelData.loadLevel(LevelData.level4),
-               LevelData.loadLevel(LevelData.level5) ];
-    levelNumber = 4;
+               LevelData.loadLevel(LevelData.level5),
+               LevelData.loadLevel(LevelData.level6),
+               LevelData.loadLevel(LevelData.level7),
+               LevelData.loadLevel(LevelData.level8) ];
+    levelNumber = 0;
     level = levels[levelNumber];
     level.tutorialMessage = levelNumber < 3 ? levelNumber : null;
     Resources.sounds['operationroom'].currentTime = 0;

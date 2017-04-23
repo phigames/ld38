@@ -34,6 +34,7 @@ class Level {
     flowTime = null;
     particleEmitters.clear();
     won = lost = false;
+    Resources.sounds['flow'].pause();
   }
 
   void flow() {
@@ -54,6 +55,11 @@ class Level {
     particleEmitters.add(new ParticleEmitter(brokenTile.x * Tile.width + Tile.width / 2, brokenTile.y * Tile.height + Tile.height / 2, 0, 0, color));
     onLost();
     lostMessage = 'lost_mess';
+    if (Resources.sounds['flow'].paused) {
+      Resources.sounds['flow'].currentTime = 0;
+      Resources.sounds['flow'].loop = true;
+      Resources.sounds['flow'].play();
+    }
   }
 
   void addLeak(Tile leakingTile, num offsetX, num offsetY) {
@@ -68,6 +74,11 @@ class Level {
     particleEmitters.add(new ParticleEmitter(leakingTile.x * Tile.width + (Tile.width + offsetX * Tile.width) / 2, leakingTile.y * Tile.height + (Tile.height + offsetY * Tile.height) / 2, offsetX, offsetY, color));
     onLost();
     lostMessage = 'lost_mess';
+    if (Resources.sounds['flow'].paused) {
+      Resources.sounds['flow'].currentTime = 0;
+      Resources.sounds['flow'].loop = true;
+      Resources.sounds['flow'].play();
+    }
   }
 
   bool checkOxygen() {
@@ -206,6 +217,8 @@ class Level {
         int y = (Input.mouseY - tileOffsetY) ~/ Tile.height;
         if (x >= 0 && x < width && y >= 0 && y < height) {
           tiles[x][y].rotate();
+          Resources.sounds['blip_low'].currentTime = 0;
+          Resources.sounds['blip_low'].play();
         } else {
           num buttonX = (canvas.width - 38 * scaleFactor) / 2;
           num buttonY = height * Tile.height + tileOffsetY + 8 * scaleFactor;
@@ -214,6 +227,8 @@ class Level {
           if (Input.mouseX > buttonX && Input.mouseX < buttonX + buttonWidth &&
               Input.mouseY > buttonY && Input.mouseY < buttonY + buttonHeight) {
             flow();
+            Resources.sounds['blip_high'].currentTime = 0;
+            Resources.sounds['blip_high'].play();
           }
         }
       } else if (won) {
@@ -224,6 +239,8 @@ class Level {
         if (Input.mouseX > buttonX && Input.mouseX < buttonX + buttonWidth &&
             Input.mouseY > buttonY && Input.mouseY < buttonY + buttonHeight) {
           next = true;
+          Resources.sounds['blip_high'].currentTime = 0;
+          Resources.sounds['blip_high'].play();
         }
       } else if (lost) {
         num buttonX = (canvas.width - 36 * scaleFactor) / 2;
@@ -233,6 +250,8 @@ class Level {
         if (Input.mouseX > buttonX && Input.mouseX < buttonX + buttonWidth &&
             Input.mouseY > buttonY && Input.mouseY < buttonY + buttonHeight) {
           resetTiles();
+          Resources.sounds['blip_high'].currentTime = 0;
+          Resources.sounds['blip_high'].play();
         }
       }
       if (Input.mouseX > scaleFactor && Input.mouseX < scaleFactor + 11 * scaleFactor &&

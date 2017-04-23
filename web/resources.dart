@@ -40,6 +40,9 @@ class Resources {
     loadImage('speaker');
     loadImage('speaker_no');
     loadSound('operationroom');
+    loadSound('blip_low');
+    loadSound('blip_high');
+    loadSound('flow');
   }
 
   static void loadImage(String key) {

@@ -3604,11 +3604,11 @@
       var t1, t2;
       for (; t1 = $._nextCallback, t1 != null;) {
         $._lastPriorityCallback = null;
-        t2 = t1.get$next();
+        t2 = t1.next;
         $._nextCallback = t2;
         if (t2 == null)
           $._lastCallback = null;
-        $.Zone__current = t1.get$zone();
+        $.Zone__current = t1.zone;
         t1.callback$0();
       }
     },
@@ -4237,7 +4237,7 @@
       }
     },
     _AsyncCallbackEntry: {
-      "^": "Object;callback,zone<,next@",
+      "^": "Object;callback,zone,next",
       callback$0: function() {
         return this.callback.call$0();
       }
@@ -7202,7 +7202,25 @@
               if (i >= tiles.length)
                 return H.ioore(tiles, i);
               t7 = tiles[i];
-              t8 = new G.TileLungs(level, i, j, null, null, null, false, connectLeft, connectTop, connectRight, connectBottom, null, null, null, null, null);
+              t8 = new G.TileLungs(level, i, j, null, null, null, false, true, true, true, false, null, null, null, null, null);
+              t8.infected = false;
+              t8.oxygen = false;
+              t8.blood = false;
+              t8.sourceBottom = false;
+              t8.sourceRight = false;
+              t8.sourceTop = false;
+              t8.sourceLeft = false;
+              t8.breakAnimationFrame = null;
+              J.add$1$ax(t7, t8);
+              t8 = level.organs;
+              if (i >= tiles.length)
+                return H.ioore(tiles, i);
+              t8.push(J.$index$asx(tiles[i], j));
+            } else if (symbol === "p") {
+              if (i >= tiles.length)
+                return H.ioore(tiles, i);
+              t7 = tiles[i];
+              t8 = new G.TileLungs(level, i, j, null, null, null, false, true, false, true, false, null, null, null, null, null);
               t8.infected = false;
               t8.oxygen = false;
               t8.blood = false;
@@ -7220,7 +7238,43 @@
               if (i >= tiles.length)
                 return H.ioore(tiles, i);
               t7 = tiles[i];
-              t8 = new G.TileLiver(level, i, j, null, null, null, true, connectLeft, connectTop, connectRight, connectBottom, null, null, null, null, null);
+              t8 = new G.TileLiver(level, i, j, null, null, null, true, true, false, true, false, null, null, null, null, null);
+              t8.infected = false;
+              t8.oxygen = false;
+              t8.blood = false;
+              t8.sourceBottom = false;
+              t8.sourceRight = false;
+              t8.sourceTop = false;
+              t8.sourceLeft = false;
+              t8.breakAnimationFrame = null;
+              J.add$1$ax(t7, t8);
+              t8 = level.organs;
+              if (i >= tiles.length)
+                return H.ioore(tiles, i);
+              t8.push(J.$index$asx(tiles[i], j));
+            } else if (symbol === "B") {
+              if (i >= tiles.length)
+                return H.ioore(tiles, i);
+              t7 = tiles[i];
+              t8 = new G.TileBrain(level, i, j, null, null, null, true, true, true, false, false, null, null, null, null, null);
+              t8.infected = false;
+              t8.oxygen = false;
+              t8.blood = false;
+              t8.sourceBottom = false;
+              t8.sourceRight = false;
+              t8.sourceTop = false;
+              t8.sourceLeft = false;
+              t8.breakAnimationFrame = null;
+              J.add$1$ax(t7, t8);
+              t8 = level.organs;
+              if (i >= tiles.length)
+                return H.ioore(tiles, i);
+              t8.push(J.$index$asx(tiles[i], j));
+            } else if (symbol === "S") {
+              if (i >= tiles.length)
+                return H.ioore(tiles, i);
+              t7 = tiles[i];
+              t8 = new G.TileStomach(level, i, j, null, null, null, true, true, true, true, false, null, null, null, null, null);
               t8.infected = false;
               t8.oxygen = false;
               t8.blood = false;
@@ -7267,7 +7321,7 @@
       G.Resources_load();
       $.random = C.C__JSRandom;
       t1 = new G.GamestateLevel(null, null, null);
-      t2 = [G.LevelData_loadLevel($.$get$LevelData_level1()), G.LevelData_loadLevel($.$get$LevelData_level2()), G.LevelData_loadLevel($.$get$LevelData_level3()), G.LevelData_loadLevel($.$get$LevelData_level4())];
+      t2 = [G.LevelData_loadLevel($.$get$LevelData_level1()), G.LevelData_loadLevel($.$get$LevelData_level2()), G.LevelData_loadLevel($.$get$LevelData_level3()), G.LevelData_loadLevel($.$get$LevelData_level4()), G.LevelData_loadLevel($.$get$LevelData_level5()), G.LevelData_loadLevel($.$get$LevelData_level6())];
       t1.levels = t2;
       t1.levelNumber = 0;
       t2 = t2[0];
@@ -7340,6 +7394,8 @@
       G.Resources_loadImage("heart_arrow_bottom");
       G.Resources_loadImage("lungs");
       G.Resources_loadImage("liver");
+      G.Resources_loadImage("brain");
+      G.Resources_loadImage("stomach");
       G.Resources_loadImage("level");
       G.Resources_loadImage("won");
       G.Resources_loadImage("next");
@@ -7402,7 +7458,7 @@
             return t1.$add();
           ++t1;
           this.levelNumber = t1;
-          if (t1 >= 4)
+          if (t1 >= 6)
             $.gamestate = new G.GamestateEnd();
           else {
             t2 = this.levels[t1];
@@ -7427,30 +7483,30 @@
         t3 = 3 * scaleFactor;
         t4 = 10 * scaleFactor;
         $.bufferContext.drawImage($.Resources_images.$index(0, "level"), 0, 0, 57, 10, t1.tileOffsetX, t3, 57 * scaleFactor, t4);
-        t5 = $.bufferContext;
-        t6 = 6 * scaleFactor;
-        t7 = $.Resources_images;
+        t5 = $.Resources_images;
+        t6 = $.bufferContext;
+        t7 = 6 * scaleFactor;
         t8 = 60 * scaleFactor;
         if (t2 > 9) {
-          t7 = t7.$index(0, "level");
+          t5 = t5.$index(0, "level");
           t9 = C.JSInt_methods._tdivFast$1(t2, 10);
           t10 = t1.tileOffsetX;
           if (typeof t10 !== "number")
             return t10.$add();
-          t5.drawImage(t7, 57 + t9 * 6, 0, 6, 10, t10 + t8, t3, t6, t4);
+          t6.drawImage(t5, 57 + t9 * 6, 0, 6, 10, t10 + t8, t3, t7, t4);
           t8 = $.bufferContext;
           t10 = $.Resources_images.$index(0, "level");
           t2 = C.JSInt_methods.$mod(t2, 10);
           t1 = t1.tileOffsetX;
           if (typeof t1 !== "number")
             return t1.$add();
-          t8.drawImage(t10, 57 + t2 * 6, 0, 6, 10, t1 + 67 * scaleFactor, t3, t6, t4);
+          t8.drawImage(t10, 57 + t2 * 6, 0, 6, 10, t1 + 67 * scaleFactor, t3, t7, t4);
         } else {
-          t7 = t7.$index(0, "level");
+          t5 = t5.$index(0, "level");
           t1 = t1.tileOffsetX;
           if (typeof t1 !== "number")
             return t1.$add();
-          t5.drawImage(t7, 57 + t2 * 6, 0, 6, 10, t1 + t8, t3, t6, t4);
+          t6.drawImage(t5, 57 + t2 * 6, 0, 6, 10, t1 + t8, t3, t7, t4);
         }
       },
       onResize$0: function(_) {
@@ -7640,7 +7696,7 @@
       }
     },
     Level: {
-      "^": "Object;width,height,tileOffsetX,tileOffsetY,tiles,organs,flowTiles,flowTime,particleEmitters,won,lost,lostMessage,tutorialMessage,next@,sound",
+      "^": "Object;width,height,tileOffsetX,tileOffsetY,tiles,organs,flowTiles,flowTime,particleEmitters,won,lost,lostMessage,tutorialMessage,next,sound",
       resetTiles$0: function() {
         var i, j, t1;
         for (i = 0; i < this.width; ++i)
@@ -7757,12 +7813,12 @@
               t1 = false;
           else
             t1 = false;
-          t3 = $.bufferContext;
-          t4 = $.Resources_images;
+          t3 = $.Resources_images;
+          t4 = $.bufferContext;
           if (t1)
-            t3.drawImage(t4.$index(0, "start"), 38, 0, 38, 16, buttonX, buttonY, t2, buttonHeight);
+            t4.drawImage(t3.$index(0, "start"), 38, 0, 38, 16, buttonX, buttonY, t2, buttonHeight);
           else
-            t3.drawImage(t4.$index(0, "start"), 0, 0, 38, 16, buttonX, buttonY, t2, buttonHeight);
+            t4.drawImage(t3.$index(0, "start"), 0, 0, 38, 16, buttonX, buttonY, t2, buttonHeight);
         } else if (this.won === true) {
           t1 = $.bufferContext;
           t2 = $.Resources_images.$index(0, "won");
@@ -7805,12 +7861,12 @@
               t1 = false;
           else
             t1 = false;
-          t2 = $.bufferContext;
-          t3 = $.Resources_images;
+          t2 = $.Resources_images;
+          t3 = $.bufferContext;
           if (t1)
-            t2.drawImage(t3.$index(0, "next"), 32, 0, 32, 16, buttonX, buttonY, t7, buttonHeight);
+            t3.drawImage(t2.$index(0, "next"), 32, 0, 32, 16, buttonX, buttonY, t7, buttonHeight);
           else
-            t2.drawImage(t3.$index(0, "next"), 0, 0, 32, 16, buttonX, buttonY, t7, buttonHeight);
+            t3.drawImage(t2.$index(0, "next"), 0, 0, 32, 16, buttonX, buttonY, t7, buttonHeight);
         } else if (this.lost === true) {
           t1 = $.bufferContext;
           t2 = $.Resources_images.$index(0, this.lostMessage);
@@ -7853,12 +7909,12 @@
               t1 = false;
           else
             t1 = false;
-          t2 = $.bufferContext;
-          t3 = $.Resources_images;
+          t2 = $.Resources_images;
+          t3 = $.bufferContext;
           if (t1)
-            t2.drawImage(t3.$index(0, "retry"), 36, 0, 36, 16, buttonX, buttonY, t7, buttonHeight);
+            t3.drawImage(t2.$index(0, "retry"), 36, 0, 36, 16, buttonX, buttonY, t7, buttonHeight);
           else
-            t2.drawImage(t3.$index(0, "retry"), 0, 0, 36, 16, buttonX, buttonY, t7, buttonHeight);
+            t3.drawImage(t2.$index(0, "retry"), 0, 0, 36, 16, buttonX, buttonY, t7, buttonHeight);
         }
         if (this.tutorialMessage != null) {
           t1 = $.bufferContext;
@@ -7873,22 +7929,22 @@
           t1.drawImage(t2, 0, t3 * 43, 114, 43, (t4 - t5) / 2, this.tileOffsetY, t5, 43 * scaleFactor);
         }
         t1 = this.sound;
-        t2 = 10 * scaleFactor;
-        t3 = $.bufferContext;
-        t4 = $.Resources_images;
+        t2 = $.Resources_images;
+        t3 = 10 * scaleFactor;
+        t4 = $.bufferContext;
         t5 = 11 * scaleFactor;
         if (t1 === true) {
-          t1 = t4.$index(0, "speaker");
-          t4 = J.get$height$x($.canvas);
-          if (typeof t4 !== "number")
-            return t4.$sub();
-          t3.drawImage(t1, scaleFactor, t4 - t5, t5, t2);
+          t1 = t2.$index(0, "speaker");
+          t2 = J.get$height$x($.canvas);
+          if (typeof t2 !== "number")
+            return t2.$sub();
+          t4.drawImage(t1, scaleFactor, t2 - t5, t5, t3);
         } else {
-          t1 = t4.$index(0, "speaker_no");
-          t4 = J.get$height$x($.canvas);
-          if (typeof t4 !== "number")
-            return t4.$sub();
-          t3.drawImage(t1, scaleFactor, t4 - t5, t5, t2);
+          t1 = t2.$index(0, "speaker_no");
+          t2 = J.get$height$x($.canvas);
+          if (typeof t2 !== "number")
+            return t2.$sub();
+          t4.drawImage(t1, scaleFactor, t2 - t5, t5, t3);
         }
       },
       onResize$0: function(_) {
@@ -8264,11 +8320,11 @@
             t1 = t1 < 0;
           } else
             t1 = true;
-          t2 = $.bufferContext;
-          t3 = $.Resources_images;
+          t2 = $.Resources_images;
+          t3 = $.bufferContext;
           if (t1) {
-            t1 = t3.$index(0, "vessel_center_" + type);
-            t3 = this.x;
+            t1 = t2.$index(0, "vessel_center_" + type);
+            t2 = this.x;
             t4 = $.Tile_width;
             if (typeof t4 !== "number")
               return H.iae(t4);
@@ -8283,12 +8339,12 @@
             t5 = t5.tileOffsetY;
             if (typeof t5 !== "number")
               return H.iae(t5);
-            t2.drawImage(t1, t3 * t4 + t6, t7 * t8 + t5, t4, t8);
+            t3.drawImage(t1, t2 * t4 + t6, t7 * t8 + t5, t4, t8);
           } else {
-            t1 = t3.$index(0, "vessel_center_break");
-            t3 = this.breakAnimationFrame;
-            if (typeof t3 !== "number")
-              return t3.$mul();
+            t1 = t2.$index(0, "vessel_center_break");
+            t2 = this.breakAnimationFrame;
+            if (typeof t2 !== "number")
+              return t2.$mul();
             t4 = this.x;
             t5 = $.Tile_width;
             if (typeof t5 !== "number")
@@ -8304,7 +8360,7 @@
             t6 = t6.tileOffsetY;
             if (typeof t6 !== "number")
               return H.iae(t6);
-            t2.drawImage(t1, t3 * 16, 0, 16, 16, t4 * t5 + t7, t8 * t9 + t6, t5, t9);
+            t3.drawImage(t1, t2 * 16, 0, 16, 16, t4 * t5 + t7, t8 * t9 + t6, t5, t9);
           }
           if (this.connectionLeft) {
             t1 = $.bufferContext;
@@ -8723,6 +8779,56 @@
           return H.iae(t5);
         t1.drawImage(t2, t3 * t4 + t6, t7 * t8 + t5, t4, t8);
       }
+    },
+    TileBrain: {
+      "^": "Tile;level,x,y,blood,oxygen,infected,usesOxygen,connectionLeft,connectionTop,connectionRight,connectionBottom,sourceLeft,sourceTop,sourceRight,sourceBottom,breakAnimationFrame",
+      draw$0: function() {
+        var t1, t2, t3, t4, t5, t6, t7, t8;
+        this.super$Tile$draw();
+        t1 = $.bufferContext;
+        t2 = $.Resources_images.$index(0, "brain");
+        t3 = this.x;
+        t4 = $.Tile_width;
+        if (typeof t4 !== "number")
+          return H.iae(t4);
+        t5 = this.level;
+        t6 = t5.tileOffsetX;
+        if (typeof t6 !== "number")
+          return H.iae(t6);
+        t7 = this.y;
+        t8 = $.Tile_height;
+        if (typeof t8 !== "number")
+          return H.iae(t8);
+        t5 = t5.tileOffsetY;
+        if (typeof t5 !== "number")
+          return H.iae(t5);
+        t1.drawImage(t2, t3 * t4 + t6, t7 * t8 + t5, t4, t8);
+      }
+    },
+    TileStomach: {
+      "^": "Tile;level,x,y,blood,oxygen,infected,usesOxygen,connectionLeft,connectionTop,connectionRight,connectionBottom,sourceLeft,sourceTop,sourceRight,sourceBottom,breakAnimationFrame",
+      draw$0: function() {
+        var t1, t2, t3, t4, t5, t6, t7, t8;
+        this.super$Tile$draw();
+        t1 = $.bufferContext;
+        t2 = $.Resources_images.$index(0, "stomach");
+        t3 = this.x;
+        t4 = $.Tile_width;
+        if (typeof t4 !== "number")
+          return H.iae(t4);
+        t5 = this.level;
+        t6 = t5.tileOffsetX;
+        if (typeof t6 !== "number")
+          return H.iae(t6);
+        t7 = this.y;
+        t8 = $.Tile_height;
+        if (typeof t8 !== "number")
+          return H.iae(t8);
+        t5 = t5.tileOffsetY;
+        if (typeof t5 !== "number")
+          return H.iae(t5);
+        t1.drawImage(t2, t3 * t4 + t6, t7 * t8 + t5, t4, t8);
+      }
     }
   }, 1]];
   setupProgram(dart, 0);
@@ -8920,14 +9026,160 @@
   C.C__JSRandom = new P._JSRandom();
   C.C__RootZone = new P._RootZone();
   C.Duration_0 = new P.Duration(0);
-  C.JS_CONST_9Uv = function() {  function typeNameInChrome(o) {    var constructor = o.constructor;    if (constructor) {      var name = constructor.name;      if (name) return name;    }    var s = Object.prototype.toString.call(o);    return s.substring(8, s.length - 1);  }  function getUnknownTag(object, tag) {    if (/^HTML[A-Z].*Element$/.test(tag)) {      var name = Object.prototype.toString.call(object);      if (name == "[object Object]") return null;      return "HTMLElement";    }  }  function getUnknownTagGenericBrowser(object, tag) {    if (self.HTMLElement && object instanceof HTMLElement) return "HTMLElement";    return getUnknownTag(object, tag);  }  function prototypeForTag(tag) {    if (typeof window == "undefined") return null;    if (typeof window[tag] == "undefined") return null;    var constructor = window[tag];    if (typeof constructor != "function") return null;    return constructor.prototype;  }  function discriminator(tag) { return null; }  var isBrowser = typeof navigator == "object";  return {    getTag: typeNameInChrome,    getUnknownTag: isBrowser ? getUnknownTagGenericBrowser : getUnknownTag,    prototypeForTag: prototypeForTag,    discriminator: discriminator };};
-  C.JS_CONST_AgZ = function(hooks) { return hooks; };
-  C.JS_CONST_EKH = function(hooks) {  if (typeof dartExperimentalFixupGetTag != "function") return hooks;  hooks.getTag = dartExperimentalFixupGetTag(hooks.getTag);};
-  C.JS_CONST_EyN = function(hooks) {  var getTag = hooks.getTag;  var prototypeForTag = hooks.prototypeForTag;  function getTagFixed(o) {    var tag = getTag(o);    if (tag == "Document") {      // "Document", so we check for the xmlVersion property, which is the empty      if (!!o.xmlVersion) return "!Document";      return "!HTMLDocument";    }    return tag;  }  function prototypeForTagFixed(tag) {    if (tag == "Document") return null;    return prototypeForTag(tag);  }  hooks.getTag = getTagFixed;  hooks.prototypeForTag = prototypeForTagFixed;};
-  C.JS_CONST_LlX = function(hooks) {  var userAgent = typeof navigator == "object" ? navigator.userAgent : "";  if (userAgent.indexOf("Firefox") == -1) return hooks;  var getTag = hooks.getTag;  var quickMap = {    "BeforeUnloadEvent": "Event",    "DataTransfer": "Clipboard",    "GeoGeolocation": "Geolocation",    "Location": "!Location",    "WorkerMessageEvent": "MessageEvent",    "XMLDocument": "!Document"};  function getTagFirefox(o) {    var tag = getTag(o);    return quickMap[tag] || tag;  }  hooks.getTag = getTagFirefox;};
-  C.JS_CONST_c0o = function(hooks) {  var userAgent = typeof navigator == "object" ? navigator.userAgent : "";  if (userAgent.indexOf("Trident/") == -1) return hooks;  var getTag = hooks.getTag;  var quickMap = {    "BeforeUnloadEvent": "Event",    "DataTransfer": "Clipboard",    "HTMLDDElement": "HTMLElement",    "HTMLDTElement": "HTMLElement",    "HTMLPhraseElement": "HTMLElement",    "Position": "Geoposition"  };  function getTagIE(o) {    var tag = getTag(o);    var newTag = quickMap[tag];    if (newTag) return newTag;    if (tag == "Object") {      if (window.DataView && (o instanceof window.DataView)) return "DataView";    }    return tag;  }  function prototypeForTagIE(tag) {    var constructor = window[tag];    if (constructor == null) return null;    return constructor.prototype;  }  hooks.getTag = getTagIE;  hooks.prototypeForTag = prototypeForTagIE;};
-  C.JS_CONST_jzj = function getTagFallback(o) {  var constructor = o.constructor;  if (typeof constructor == "function") {    var name = constructor.name;    if (typeof name == "string" &&        // constructor name does not 'stick'.  The shortest real DOM object        name.length > 2 &&        // On Firefox we often get "Object" as the constructor name, even for        name !== "Object" &&        name !== "Function.prototype") {      return name;    }  }  var s = Object.prototype.toString.call(o);  return s.substring(8, s.length - 1);};
-  C.JS_CONST_nuk = function(getTagFallback) {  return function(hooks) {    if (typeof navigator != "object") return hooks;    var ua = navigator.userAgent;    if (ua.indexOf("DumpRenderTree") >= 0) return hooks;    if (ua.indexOf("Chrome") >= 0) {      function confirm(p) {        return typeof window == "object" && window[p] && window[p].name == p;      }      if (confirm("Window") && confirm("HTMLElement")) return hooks;    }    hooks.getTag = getTagFallback;  };};
+  C.JS_CONST_9Uv = function() {
+  function typeNameInChrome(o) {
+    var constructor = o.constructor;
+    if (constructor) {
+      var name = constructor.name;
+      if (name) return name;
+    }
+    var s = Object.prototype.toString.call(o);
+    return s.substring(8, s.length - 1);
+  }
+  function getUnknownTag(object, tag) {
+    if (/^HTML[A-Z].*Element$/.test(tag)) {
+      var name = Object.prototype.toString.call(object);
+      if (name == "[object Object]") return null;
+      return "HTMLElement";
+    }
+  }
+  function getUnknownTagGenericBrowser(object, tag) {
+    if (self.HTMLElement && object instanceof HTMLElement) return "HTMLElement";
+    return getUnknownTag(object, tag);
+  }
+  function prototypeForTag(tag) {
+    if (typeof window == "undefined") return null;
+    if (typeof window[tag] == "undefined") return null;
+    var constructor = window[tag];
+    if (typeof constructor != "function") return null;
+    return constructor.prototype;
+  }
+  function discriminator(tag) { return null; }
+
+  var isBrowser = typeof navigator == "object";
+
+  return {
+    getTag: typeNameInChrome,
+    getUnknownTag: isBrowser ? getUnknownTagGenericBrowser : getUnknownTag,
+    prototypeForTag: prototypeForTag,
+    discriminator: discriminator };
+};
+  C.JS_CONST_AgZ = function(hooks) { return hooks; }
+;
+  C.JS_CONST_EKH = function(hooks) {
+  if (typeof dartExperimentalFixupGetTag != "function") return hooks;
+  hooks.getTag = dartExperimentalFixupGetTag(hooks.getTag);
+};
+  C.JS_CONST_EyN = function(hooks) {
+  var getTag = hooks.getTag;
+  var prototypeForTag = hooks.prototypeForTag;
+  function getTagFixed(o) {
+    var tag = getTag(o);
+    if (tag == "Document") {
+      // "Document", so we check for the xmlVersion property, which is the empty
+      if (!!o.xmlVersion) return "!Document";
+      return "!HTMLDocument";
+    }
+    return tag;
+  }
+
+  function prototypeForTagFixed(tag) {
+    if (tag == "Document") return null;    return prototypeForTag(tag);
+  }
+
+  hooks.getTag = getTagFixed;
+  hooks.prototypeForTag = prototypeForTagFixed;
+};
+  C.JS_CONST_LlX = function(hooks) {
+  var userAgent = typeof navigator == "object" ? navigator.userAgent : "";
+  if (userAgent.indexOf("Firefox") == -1) return hooks;
+
+  var getTag = hooks.getTag;
+
+  var quickMap = {
+    "BeforeUnloadEvent": "Event",
+    "DataTransfer": "Clipboard",
+    "GeoGeolocation": "Geolocation",
+    "Location": "!Location",    "WorkerMessageEvent": "MessageEvent",
+    "XMLDocument": "!Document"};
+
+  function getTagFirefox(o) {
+    var tag = getTag(o);
+    return quickMap[tag] || tag;
+  }
+
+  hooks.getTag = getTagFirefox;
+};
+  C.JS_CONST_c0o = function(hooks) {
+  var userAgent = typeof navigator == "object" ? navigator.userAgent : "";
+  if (userAgent.indexOf("Trident/") == -1) return hooks;
+
+  var getTag = hooks.getTag;
+
+  var quickMap = {
+    "BeforeUnloadEvent": "Event",
+    "DataTransfer": "Clipboard",
+    "HTMLDDElement": "HTMLElement",
+    "HTMLDTElement": "HTMLElement",
+    "HTMLPhraseElement": "HTMLElement",
+    "Position": "Geoposition"
+  };
+
+  function getTagIE(o) {
+    var tag = getTag(o);
+    var newTag = quickMap[tag];
+    if (newTag) return newTag;
+    if (tag == "Object") {
+      if (window.DataView && (o instanceof window.DataView)) return "DataView";
+    }
+    return tag;
+  }
+
+  function prototypeForTagIE(tag) {
+    var constructor = window[tag];
+    if (constructor == null) return null;
+    return constructor.prototype;
+  }
+
+  hooks.getTag = getTagIE;
+  hooks.prototypeForTag = prototypeForTagIE;
+};
+  C.JS_CONST_jzj = function getTagFallback(o) {
+  var constructor = o.constructor;
+  if (typeof constructor == "function") {
+    var name = constructor.name;
+
+    if (typeof name == "string" &&
+
+        // constructor name does not 'stick'.  The shortest real DOM object
+        name.length > 2 &&
+
+        // On Firefox we often get "Object" as the constructor name, even for
+        name !== "Object" &&
+
+        name !== "Function.prototype") {
+      return name;
+    }
+  }
+  var s = Object.prototype.toString.call(o);
+  return s.substring(8, s.length - 1);
+};
+  C.JS_CONST_nuk = function(getTagFallback) {
+  return function(hooks) {
+    if (typeof navigator != "object") return hooks;
+
+    var ua = navigator.userAgent;
+    if (ua.indexOf("DumpRenderTree") >= 0) return hooks;
+    if (ua.indexOf("Chrome") >= 0) {
+      function confirm(p) {
+        return typeof window == "object" && window[p] && window[p].name == p;
+      }
+      if (confirm("Window") && confirm("HTMLElement")) return hooks;
+    }
+
+    hooks.getTag = getTagFallback;
+  };
+};
   $.Primitives_mirrorFunctionCacheName = "$cachedFunction";
   $.Primitives_mirrorInvokeCacheName = "$cachedInvocation";
   $.Closure_functionCounter = 0;
@@ -9043,13 +9295,17 @@
   }, "_toStringVisiting", "$get$_toStringVisiting", "_toStringVisiting", function() {
     return [];
   }, "LevelData_level1", "$get$LevelData_level1", "level1", function() {
-    return ["LIP", "I I", "L>L"];
+    return ["LpL", "I I", "L>L"];
   }, "LevelData_level2", "$get$LevelData_level2", "level2", function() {
     return ["LIJIL", "I   I", "I LIP", "I I I", "LI>IL"];
   }, "LevelData_level3", "$get$LevelData_level3", "level3", function() {
-    return [".LIIL", ".I..I", ".PI<T", ".I..I", ".JIIL"];
+    return [".LIIL", ".I..I", ".PI<T", ".I..I", ".IJIL"];
   }, "LevelData_level4", "$get$LevelData_level4", "level4", function() {
-    return ["LIIIL", "v...I", "ILIPT", "II..J", "LTPIL"];
+    return ["LIIIL", "v...I", "ILIpT", "II..J", "LTpIL"];
+  }, "LevelData_level5", "$get$LevelData_level5", "level5", function() {
+    return ["L....L.", "LIIPITL", "ILI+ILI", "JLLTBLL", "LTLLT^.", ".LIJIL."];
+  }, "LevelData_level6", "$get$LevelData_level6", "level6", function() {
+    return ["LILLIL.", "ILTLISL", "TBLpILI", "IILI.LT", "L>TL.PL", "L.LTIL."];
   }]);
   Isolate = Isolate.$finishIsolateConstructor(Isolate);
   $ = new Isolate();

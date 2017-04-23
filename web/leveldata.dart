@@ -17,21 +17,33 @@ class LevelData {
     '.I..I',
     '.PI<T',
     '.I..I',
-    '.IJIL' ];
+    '.LJIL' ];
   static final List<String> level4 =
-  [ 'LIIIL',
-    'v...I',
+  [ 'LITLL',
+    'v.LTL',
     'ILIpT',
     'II..J',
     'LTpIL' ];
   static final List<String> level5 =
+  [ 'LIL.T.',
+    'PT^IIL',
+    'IIILIT',
+    'TSLJLT',
+    'LIITTL' ];
+  static final List<String> level6 =
+  [ '.LITL.',
+    'LSLLTL',
+    'LT>IPT',
+    '.ILLIL',
+    '.LJTL.' ];
+  static final List<String> level7 =
   [ 'L....L.',
     'LIIPITL',
     'ILI+ILI',
     'JLLTBLL',
     'LTLLT^.',
     '.LIJIL.' ];
-  static final List<String> level6 =
+  static final List<String> level8 =
   [ 'LILLIL.',
     'ILTLISL',
     'TBLpILI',
