@@ -7,17 +7,19 @@ abstract class Tile {
   Level level;
   int x, y;
   bool blood, oxygen, infected;
+  bool usesOxygen;
   bool connectionLeft, connectionTop, connectionRight, connectionBottom;
   bool sourceLeft, sourceTop, sourceRight, sourceBottom;
   int breakAnimationFrame;
 
-  Tile(this.level, this.x, this.y, this.connectionLeft, this.connectionTop, this.connectionRight, this.connectionBottom) {
+  Tile(this.level, this.x, this.y, this.connectionLeft, this.connectionTop, this.connectionRight, this.connectionBottom, [this.usesOxygen = false]) {
     reset();
   }
 
   void reset() {
     blood = oxygen = infected = false;
     sourceLeft = sourceTop = sourceRight = sourceBottom = false;
+    breakAnimationFrame = null;
   }
 
   void rotate() {
@@ -35,7 +37,7 @@ abstract class Tile {
       if (sourceLeft) { // SUCK LEFT
         Tile source = level.tiles[x - 1][y];
         blood = blood || source.blood;
-        oxygen = oxygen || source.oxygen;
+        oxygen = oxygen || (source.oxygen && !source.usesOxygen);
         infected = infected || source.infected;
       } else if (connectionLeft) { // FLOW LEFT
         if (x > 0) {
@@ -56,7 +58,7 @@ abstract class Tile {
       if (sourceTop) { // SUCK TOP
         Tile source = level.tiles[x][y - 1];
         blood = blood || source.blood;
-        oxygen = oxygen || source.oxygen;
+        oxygen = oxygen || (source.oxygen && !source.usesOxygen);
         infected = infected || source.infected;
       } else if (connectionTop) { // FLOW TOP
         if (y > 0) {
@@ -77,7 +79,7 @@ abstract class Tile {
       if (sourceRight) { // SUCK RIGHT
         Tile source = level.tiles[x + 1][y];
         blood = blood || source.blood;
-        oxygen = oxygen || source.oxygen;
+        oxygen = oxygen || (source.oxygen && !source.usesOxygen);
         infected = infected || source.infected;
       } else if (connectionRight) { // FLOW RIGHT
         if (x < level.width - 1) {
@@ -98,7 +100,7 @@ abstract class Tile {
       if (sourceBottom) { // SUCK BOTTOM
         Tile source = level.tiles[x][y + 1];
         blood = blood || source.blood;
-        oxygen = oxygen || source.oxygen;
+        oxygen = oxygen || (source.oxygen && !source.usesOxygen);
         infected = infected || source.infected;
       } else if (connectionBottom) { // FLOW BOTTOM
         if (y < level.height - 1) {
@@ -200,7 +202,7 @@ class TileHeart extends Tile {
   int flowDirection;
 
   TileHeart(Level level, int x, int y, bool left, bool top, bool right, bool bottom, this.flowDirection)
-      : super(level, x, y, left, top, right, bottom);
+      : super(level, x, y, left, top, right, bottom, true);
 
   void rotate() {
     super.rotate();
@@ -274,25 +276,25 @@ class TileHeart extends Tile {
       if (sourceLeft) { // SUCK LEFT
         Tile source = level.tiles[x - 1][y];
         blood = blood || source.blood;
-        oxygen = oxygen || source.oxygen;
+        oxygen = oxygen || (source.oxygen && !source.usesOxygen);
         infected = infected || source.infected;
       } else if (sourceTop) { // SUCK TOP
         Tile source = level.tiles[x][y - 1];
         blood = blood || source.blood;
-        oxygen = oxygen || source.oxygen;
+        oxygen = oxygen || (source.oxygen && !source.usesOxygen);
         infected = infected || source.infected;
       } else if (sourceRight) { // SUCK RIGHT
         Tile source = level.tiles[x + 1][y];
         blood = blood || source.blood;
-        oxygen = oxygen || source.oxygen;
+        oxygen = oxygen || (source.oxygen && !source.usesOxygen);
         infected = infected || source.infected;
       } else if (sourceBottom) { // SUCK BOTTOM
         Tile source = level.tiles[x][y + 1];
         blood = blood || source.blood;
-        oxygen = oxygen || source.oxygen;
+        oxygen = oxygen || (source.oxygen && !source.usesOxygen);
         infected = infected || source.infected;
       }
-      level.onWon();
+      //level.checkWon();
     }
   }
 
@@ -322,6 +324,18 @@ class TileLungs extends Tile {
   void draw() {
     super.draw();
     bufferContext.drawImageScaled(Resources.images['lungs'], x * Tile.width + level.tileOffsetX, y * Tile.height + level.tileOffsetY, Tile.width, Tile.height);
+  }
+
+}
+
+class TileLiver extends Tile {
+
+  TileLiver(Level level, int x, int y, bool left, bool top, bool right, bool bottom)
+      : super(level, x, y, left, top, right, bottom, true);
+
+  void draw() {
+    super.draw();
+    bufferContext.drawImageScaled(Resources.images['liver'], x * Tile.width + level.tileOffsetX, y * Tile.height + level.tileOffsetY, Tile.width, Tile.height);
   }
 
 }

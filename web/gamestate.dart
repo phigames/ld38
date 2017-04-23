@@ -20,9 +20,22 @@ class GamestateLevel extends Gamestate {
 
   GamestateLevel() {
     levels = [ LevelData.loadLevel(LevelData.level1),
-               LevelData.loadLevel(LevelData.level2) ];
+               LevelData.loadLevel(LevelData.level2),
+    LevelData.loadLevel(LevelData.level2),
+    LevelData.loadLevel(LevelData.level2),
+    LevelData.loadLevel(LevelData.level2),
+    LevelData.loadLevel(LevelData.level2),
+    LevelData.loadLevel(LevelData.level2),
+    LevelData.loadLevel(LevelData.level2),
+    LevelData.loadLevel(LevelData.level2),
+    LevelData.loadLevel(LevelData.level2),
+    LevelData.loadLevel(LevelData.level2),
+    LevelData.loadLevel(LevelData.level2) ];
     levelNumber = 0;
     level = levels[levelNumber];
+    Resources.sounds['operationroom'].currentTime = 0;
+    Resources.sounds['operationroom'].loop = true;
+    Resources.sounds['operationroom'].play();
   }
 
   void update(num time) {
@@ -39,7 +52,7 @@ class GamestateLevel extends Gamestate {
 
   void draw() {
     level.draw();
-    // TODO level number
+    level.drawLevelNumber(levelNumber + 1);
   }
 
   void onResize() {
