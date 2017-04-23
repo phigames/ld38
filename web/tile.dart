@@ -260,7 +260,7 @@ class TileHeart extends Tile {
       } else if (flowDirection == 3) { // FLOW BOTTOM
         if (y < level.height - 1) {
           Tile flowTile = level.tiles[x][y + 1];
-          if (flowTile.connectionLeft) {
+          if (flowTile.connectionTop) {
             flowTile.sourceTop = true;
             if (!flowTiles.contains(flowTile)) {
               flowTiles.add(flowTile);

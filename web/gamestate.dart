@@ -21,18 +21,11 @@ class GamestateLevel extends Gamestate {
   GamestateLevel() {
     levels = [ LevelData.loadLevel(LevelData.level1),
                LevelData.loadLevel(LevelData.level2),
-    LevelData.loadLevel(LevelData.level2),
-    LevelData.loadLevel(LevelData.level2),
-    LevelData.loadLevel(LevelData.level2),
-    LevelData.loadLevel(LevelData.level2),
-    LevelData.loadLevel(LevelData.level2),
-    LevelData.loadLevel(LevelData.level2),
-    LevelData.loadLevel(LevelData.level2),
-    LevelData.loadLevel(LevelData.level2),
-    LevelData.loadLevel(LevelData.level2),
-    LevelData.loadLevel(LevelData.level2) ];
+               LevelData.loadLevel(LevelData.level3),
+               LevelData.loadLevel(LevelData.level4) ];
     levelNumber = 0;
     level = levels[levelNumber];
+    level.tutorialMessage = levelNumber < 3 ? levelNumber : null;
     Resources.sounds['operationroom'].currentTime = 0;
     Resources.sounds['operationroom'].loop = true;
     Resources.sounds['operationroom'].play();
@@ -43,10 +36,13 @@ class GamestateLevel extends Gamestate {
     if (level.next) {
       levelNumber++;
       if (levelNumber >= levels.length) {
+        gamestate = new GamestateEnd();
         // TODO game over
+      } else {
+        level = levels[levelNumber];
+        level.tutorialMessage = levelNumber < 3 ? levelNumber : null;
+        level.onResize();
       }
-      level = levels[levelNumber];
-      level.onResize();
     }
   }
 
@@ -61,6 +57,25 @@ class GamestateLevel extends Gamestate {
 
   void onClick() {
     level.onClick();
+  }
+
+}
+
+class GamestateEnd extends Gamestate {
+
+  GamestateLevel() {
+  }
+
+  void update(num time) {
+  }
+
+  void draw() {
+  }
+
+  void onResize() {
+  }
+
+  void onClick() {
   }
 
 }

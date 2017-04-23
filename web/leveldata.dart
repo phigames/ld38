@@ -3,17 +3,27 @@ part of ld38;
 class LevelData {
 
   static final List<String> level1 =
-    [ '.....',
-      '.LIP.',
-      '.I.I.',
-      '.L>L.',
-      '.....' ];
+  [ 'LIP',
+    'I I',
+    'L>L' ];
   static final List<String> level2 =
-    [ '.LJL.',
-      '.I.LL',
-      '.ILIP',
-      '.L>IL',
-      '.....' ];
+  [ 'LIJIL',
+    'I   I',
+    'I LIP',
+    'I I I',
+    'LI>IL' ];
+  static final List<String> level3 =
+  [ '.LIIL',
+    '.I..I',
+    '.PI<T',
+    '.I..I',
+    '.JIIL' ];
+  static final List<String> level4 =
+  [ 'LIIIL',
+    'v...I',
+    'ILIPT',
+    'II..J',
+    'LTPIL' ];
 
   static Level loadLevel(List<String> data) {
     int width = data[0].length;

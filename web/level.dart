@@ -11,6 +11,7 @@ class Level {
   List<ParticleEmitter> particleEmitters;
   bool won, lost;
   String lostMessage;
+  int tutorialMessage;
   bool next;
   bool sound;
 
@@ -127,7 +128,7 @@ class Level {
       num buttonWidth = 38 * scaleFactor;
       num buttonHeight = 16 * scaleFactor;
       if (Input.mouseX > buttonX && Input.mouseX < buttonX + buttonWidth &&
-          Input.mouseY > buttonY && Input.mouseY < buttonY + buttonHeight) {
+          Input.mouseY > buttonY && Input.mouseY < buttonY + buttonHeight && tutorialMessage == null) {
         bufferContext.drawImageScaledFromSource(Resources.images['start'], 38, 0, 38, 16, buttonX, buttonY, buttonWidth, buttonHeight);
       } else {
         bufferContext.drawImageScaledFromSource(Resources.images['start'], 0, 0, 38, 16, buttonX, buttonY, buttonWidth, buttonHeight);
@@ -156,6 +157,10 @@ class Level {
       } else {
         bufferContext.drawImageScaledFromSource(Resources.images['retry'], 0, 0, 36, 16, buttonX, buttonY, buttonWidth, buttonHeight);
       }
+    }
+    if (tutorialMessage != null) {
+      bufferContext.drawImageScaledFromSource(Resources.images['tutorial'], 0, tutorialMessage * 43, 114, 43,
+          (canvas.width - 114 * scaleFactor) / 2, tileOffsetY, 114 * scaleFactor, 43 * scaleFactor);
     }
     if (sound) {
       bufferContext.drawImageScaled(Resources.images['speaker'], scaleFactor, canvas.height - 11 * scaleFactor, 11 * scaleFactor, 10 * scaleFactor);
@@ -192,51 +197,55 @@ class Level {
   }
 
   void onClick() {
-    num scaleFactor = Tile.width / 16;
-    if (flowTime == null) {
-      int x = (Input.mouseX - tileOffsetX) ~/ Tile.width;
-      int y = (Input.mouseY - tileOffsetY) ~/ Tile.height;
-      if (x >= 0 && x < width && y >= 0 && y < height) {
-        tiles[x][y].rotate();
-      } else {
-        num buttonX = (canvas.width - 38 * scaleFactor) / 2;
-        num buttonY = height * Tile.height + tileOffsetY + 8 * scaleFactor;
-        num buttonWidth = 38 * scaleFactor;
+    if (tutorialMessage != null) {
+      tutorialMessage = null;
+    } else {
+      num scaleFactor = Tile.width / 16;
+      if (flowTime == null) {
+        int x = (Input.mouseX - tileOffsetX) ~/ Tile.width;
+        int y = (Input.mouseY - tileOffsetY) ~/ Tile.height;
+        if (x >= 0 && x < width && y >= 0 && y < height) {
+          tiles[x][y].rotate();
+        } else {
+          num buttonX = (canvas.width - 38 * scaleFactor) / 2;
+          num buttonY = height * Tile.height + tileOffsetY + 8 * scaleFactor;
+          num buttonWidth = 38 * scaleFactor;
+          num buttonHeight = 16 * scaleFactor;
+          if (Input.mouseX > buttonX && Input.mouseX < buttonX + buttonWidth &&
+              Input.mouseY > buttonY && Input.mouseY < buttonY + buttonHeight) {
+            flow();
+          }
+        }
+      } else if (won) {
+        num buttonX = (canvas.width - 32 * scaleFactor) / 2;
+        num buttonY = height * Tile.height + tileOffsetY + 15 * scaleFactor;
+        num buttonWidth = 32 * scaleFactor;
         num buttonHeight = 16 * scaleFactor;
         if (Input.mouseX > buttonX && Input.mouseX < buttonX + buttonWidth &&
             Input.mouseY > buttonY && Input.mouseY < buttonY + buttonHeight) {
-          flow();
+          next = true;
+        }
+      } else if (lost) {
+        num buttonX = (canvas.width - 36 * scaleFactor) / 2;
+        num buttonY = height * Tile.height + tileOffsetY + 15 * scaleFactor;
+        num buttonWidth = 36 * scaleFactor;
+        num buttonHeight = 16 * scaleFactor;
+        if (Input.mouseX > buttonX && Input.mouseX < buttonX + buttonWidth &&
+            Input.mouseY > buttonY && Input.mouseY < buttonY + buttonHeight) {
+          resetTiles();
         }
       }
-    } else if (won) {
-      num buttonX = (canvas.width - 32 * scaleFactor) / 2;
-      num buttonY = height * Tile.height + tileOffsetY + 15 * scaleFactor;
-      num buttonWidth = 32 * scaleFactor;
-      num buttonHeight = 16 * scaleFactor;
-      if (Input.mouseX > buttonX && Input.mouseX < buttonX + buttonWidth &&
-          Input.mouseY > buttonY && Input.mouseY < buttonY + buttonHeight) {
-        next = true;
-      }
-    } else if (lost) {
-      num buttonX = (canvas.width - 36 * scaleFactor) / 2;
-      num buttonY = height * Tile.height + tileOffsetY + 15 * scaleFactor;
-      num buttonWidth = 36 * scaleFactor;
-      num buttonHeight = 16 * scaleFactor;
-      if (Input.mouseX > buttonX && Input.mouseX < buttonX + buttonWidth &&
-          Input.mouseY > buttonY && Input.mouseY < buttonY + buttonHeight) {
-        resetTiles();
-      }
-    }
-    if (Input.mouseX > scaleFactor && Input.mouseX < scaleFactor + 11 * scaleFactor &&
-        Input.mouseY > canvas.height - 11 * scaleFactor && Input.mouseY < canvas.height - 11 * scaleFactor + 10 * scaleFactor) {
-      if (sound) {
-        sound = false;
-        Resources.sounds['operationroom'].pause();
-      } else {
-        sound = true;
-        Resources.sounds['operationroom'].currentTime = 0;
-        Resources.sounds['operationroom'].loop = true;
-        Resources.sounds['operationroom'].play();
+      if (Input.mouseX > scaleFactor && Input.mouseX < scaleFactor + 11 * scaleFactor &&
+          Input.mouseY > canvas.height - 11 * scaleFactor && Input.mouseY < canvas.height - 11 * scaleFactor + 10 * scaleFactor) {
+        if (sound) {
+          sound = false;
+          Resources.sounds['operationroom'].pause();
+        } else {
+          sound = true;
+          Resources.sounds['operationroom'].currentTime = 0;
+          Resources.sounds['operationroom'].loop = true;
+          Resources.sounds['operationroom'].play();
+        }
       }
     }
   }

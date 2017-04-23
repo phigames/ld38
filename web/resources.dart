@@ -34,6 +34,7 @@ class Resources {
     loadImage('lost_oxygen');
     loadImage('retry');
     loadImage('start');
+    loadImage('tutorial');
     loadImage('speaker');
     loadImage('speaker_no');
     loadSound('operationroom');
@@ -44,7 +45,7 @@ class Resources {
   }
 
   static void loadSound(String key) {
-    sounds[key] = new AudioElement('res/${key}.wav')..onLoadedData.first.then((e) => onSoundLoaded());
+    sounds[key] = new AudioElement('res/${key}.ogg')..onLoadedData.first.then((e) => onSoundLoaded());
   }
 
   static void onImageLoaded() {
