@@ -7327,9 +7327,9 @@
       t2 = t2[0];
       t1.level = t2;
       t2.tutorialMessage = 0;
-      J.set$currentTime$x($.Resources_sounds.$index(0, "operationroom"), 0);
-      J.set$loop$x($.Resources_sounds.$index(0, "operationroom"), true);
-      J.play$0$x($.Resources_sounds.$index(0, "operationroom"));
+      J.set$currentTime$x($.Resources_sounds.$index(0, "background"), 0);
+      J.set$loop$x($.Resources_sounds.$index(0, "background"), true);
+      J.play$0$x($.Resources_sounds.$index(0, "background"));
       $.gamestate = t1;
       t1 = H.setRuntimeTypeInfo(new W._EventStream(window, "resize", false), [null]);
       H.setRuntimeTypeInfo(new W._EventStreamSubscription(0, t1._target, t1._eventType, W._wrapZone(new G.main_closure()), t1._useCapture), [H.getTypeArgumentByIndex(t1, 0)])._tryResume$0();
@@ -7404,11 +7404,14 @@
       G.Resources_loadImage("retry");
       G.Resources_loadImage("start");
       G.Resources_loadImage("tutorial");
+      G.Resources_loadImage("game_over");
       G.Resources_loadImage("speaker");
       G.Resources_loadImage("speaker_no");
-      G.Resources_loadSound("operationroom");
+      G.Resources_loadSound("background");
       G.Resources_loadSound("blip_low");
       G.Resources_loadSound("blip_high");
+      G.Resources_loadSound("beep_alive");
+      G.Resources_loadSound("beep_dead");
       G.Resources_loadSound("flow");
     },
     Resources_loadImage: function(key) {
@@ -7585,6 +7588,11 @@
                   return H.ioore(t2, 0);
                 t2[0].update$1(t1.flowTiles);
                 t1.flowTime = 0;
+                if (t1.won !== true && t1.lost !== true) {
+                  J.set$currentTime$x($.Resources_sounds.$index(0, "beep_alive"), 0);
+                  J.set$loop$x($.Resources_sounds.$index(0, "beep_alive"), true);
+                  J.play$0$x($.Resources_sounds.$index(0, "beep_alive"));
+                }
                 J.set$currentTime$x($.Resources_sounds.$index(0, "blip_high"), 0);
                 J.play$0$x($.Resources_sounds.$index(0, "blip_high"));
               }
@@ -7686,12 +7694,12 @@
             t3 = $.Resources_sounds;
             if (t2 === true) {
               t1.sound = false;
-              J.pause$0$x(t3.$index(0, "operationroom"));
+              J.pause$0$x(t3.$index(0, "background"));
             } else {
               t1.sound = true;
-              J.set$currentTime$x(t3.$index(0, "operationroom"), 0);
-              J.set$loop$x($.Resources_sounds.$index(0, "operationroom"), true);
-              J.play$0$x($.Resources_sounds.$index(0, "operationroom"));
+              J.set$currentTime$x(t3.$index(0, "background"), 0);
+              J.set$loop$x($.Resources_sounds.$index(0, "background"), true);
+              J.play$0$x($.Resources_sounds.$index(0, "background"));
             }
           }
         }
@@ -7702,6 +7710,16 @@
       update$1: function(time) {
       },
       draw$0: function() {
+        var t1, t2, t3, t4;
+        t1 = $.bufferContext;
+        t2 = $.Resources_images.$index(0, "game_over");
+        t3 = J.get$width$x($.canvas);
+        if (typeof t3 !== "number")
+          return t3.$div();
+        t4 = J.get$height$x($.canvas);
+        if (typeof t4 !== "number")
+          return t4.$div();
+        t1.drawImage(t2, t3 / 2 - 178, t4 / 2 - 154, 356, 308);
       },
       onResize$0: function(_) {
       },
@@ -7725,6 +7743,7 @@
         this.lost = false;
         this.won = false;
         J.pause$0$x($.Resources_sounds.$index(0, "flow"));
+        J.pause$0$x($.Resources_sounds.$index(0, "beep_dead"));
       },
       addLeak$3: function(leakingTile, offsetX, offsetY) {
         var color, t1, t2, t3, t4, t5;
@@ -7746,12 +7765,16 @@
         t5 = new G.ParticleEmitter(t2 * t3 + (t3 + offsetX * t3) / 2, t4 * t5 + (t5 + offsetY * t5) / 2, offsetX, offsetY, color, null);
         t5.particles = H.setRuntimeTypeInfo([], [G.Particle]);
         t1.push(t5);
-        this.lost = true;
+        this.onLost$0();
         this.lostMessage = "lost_mess";
         if (J.get$paused$x($.Resources_sounds.$index(0, "flow")) === true) {
           J.set$currentTime$x($.Resources_sounds.$index(0, "flow"), 0);
           J.set$loop$x($.Resources_sounds.$index(0, "flow"), true);
           J.play$0$x($.Resources_sounds.$index(0, "flow"));
+        }
+        if (J.get$paused$x($.Resources_sounds.$index(0, "beep_dead")) === true) {
+          J.set$currentTime$x($.Resources_sounds.$index(0, "beep_dead"), 0);
+          J.play$0$x($.Resources_sounds.$index(0, "beep_dead"));
         }
       },
       checkOxygen$0: function() {
@@ -7760,6 +7783,10 @@
           if (t1[i].get$oxygen() !== true)
             return false;
         return true;
+      },
+      onLost$0: function() {
+        this.lost = true;
+        J.pause$0$x($.Resources_sounds.$index(0, "beep_alive"));
       },
       update$1: function(time) {
         var t1, _flowTiles, i;
@@ -7778,11 +7805,16 @@
             this.flowTiles = _flowTiles;
             this.flowTime = 0;
             if (_flowTiles.length === 0 && this.won !== true && this.lost !== true)
-              if (this.checkOxygen$0())
+              if (this.checkOxygen$0()) {
                 this.won = true;
-              else {
-                this.lost = true;
+                J.pause$0$x($.Resources_sounds.$index(0, "beep_alive"));
+              } else {
+                this.onLost$0();
                 this.lostMessage = "lost_oxygen";
+                if (J.get$paused$x($.Resources_sounds.$index(0, "beep_dead")) === true) {
+                  J.set$currentTime$x($.Resources_sounds.$index(0, "beep_dead"), 0);
+                  J.play$0$x($.Resources_sounds.$index(0, "beep_dead"));
+                }
               }
           }
         }
@@ -8317,12 +8349,16 @@
             t6 = new G.ParticleEmitter(t3 * t4 + t4 / 2, t5 * t6 + t6 / 2, 0, 0, color, null);
             t6.particles = H.setRuntimeTypeInfo([], [G.Particle]);
             t2.push(t6);
-            t1.lost = true;
+            t1.onLost$0();
             t1.lostMessage = "lost_mess";
             if (J.get$paused$x($.Resources_sounds.$index(0, "flow")) === true) {
               J.set$currentTime$x($.Resources_sounds.$index(0, "flow"), 0);
               J.set$loop$x($.Resources_sounds.$index(0, "flow"), true);
               J.play$0$x($.Resources_sounds.$index(0, "flow"));
+            }
+            if (J.get$paused$x($.Resources_sounds.$index(0, "beep_dead")) === true) {
+              J.set$currentTime$x($.Resources_sounds.$index(0, "beep_dead"), 0);
+              J.play$0$x($.Resources_sounds.$index(0, "beep_dead"));
             }
           } else
             flowTiles.push(this);

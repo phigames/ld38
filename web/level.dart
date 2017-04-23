@@ -278,12 +278,12 @@ class Level {
           Input.mouseY > canvas.height - 11 * scaleFactor && Input.mouseY < canvas.height - 11 * scaleFactor + 10 * scaleFactor) {
         if (sound) {
           sound = false;
-          Resources.sounds['operationroom'].pause();
+          Resources.sounds['background'].pause();
         } else {
           sound = true;
-          Resources.sounds['operationroom'].currentTime = 0;
-          Resources.sounds['operationroom'].loop = true;
-          Resources.sounds['operationroom'].play();
+          Resources.sounds['background'].currentTime = 0;
+          Resources.sounds['background'].loop = true;
+          Resources.sounds['background'].play();
         }
       }
     }
